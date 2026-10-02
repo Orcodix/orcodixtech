@@ -2,9 +2,18 @@ import React, { useState } from 'react'
 
 export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
   const [activeFilter, setActiveFilter] = useState('All')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState('grid') // 'grid' | 'list'
   const [selectedCaseStudy, setSelectedCaseStudy] = useState(null)
 
   const filterCategories = ['All', 'Web Apps', 'Mobile Apps', 'Brand & UI/UX', '3D & Motion']
+
+  const projectsStats = [
+    { value: '45+', label: 'Delivered Projects' },
+    { value: '$120M+', label: 'Client Revenue Generated' },
+    { value: '99.4%', label: 'Satisfaction Score' },
+    { value: '14', label: 'Design & Tech Awards' },
+  ]
 
   const projectsData = [
     {
@@ -79,7 +88,7 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
       client: 'Nexus Data Systems',
       duration: '7 Weeks Sprint',
       challenge: 'Engineers struggled to monitor 10,000+ real-time server nodes due to cluttered legacy dashboard interfaces.',
-      solution: 'Re-architected the entire UI/UX design system with dark mode high-contrast telemetry charts and custom keyboard shortcuts.',
+      solution: 'Re-architected the entire UI/UX design system with high-contrast telemetry charts and custom keyboard shortcuts.',
       results: [
         'Reduced incident response resolution time by 62%',
         'Adopted by 150+ enterprise engineering teams',
@@ -127,134 +136,289 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
       ],
       liveUrl: 'https://example.com',
     },
+    {
+      id: 'solaris-energy',
+      num: '07',
+      title: 'SOLARIS Renewable Hub',
+      subtitle: 'CLEAN ENERGY MONITORING APP',
+      category: 'Web Apps',
+      metric: '+340% Conversion Rate',
+      image: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=1000&q=80',
+      tags: ['Vue 3', 'IoT Telemetry', 'CSS Modules', 'Python API'],
+      client: 'Solaris Energy Global',
+      duration: '6 Weeks Sprint',
+      challenge: 'Commercial solar operators lacked unified visibility into distributed battery storage efficiency across 40+ solar farms.',
+      solution: 'Designed a real-time IoT dashboard with predictive battery life analytics and instant alerts for grid operators.',
+      results: [
+        '340% boost in online demo requests',
+        'Operational efficiency increased by 38%',
+        'Deployed across 12 countries',
+      ],
+      liveUrl: 'https://example.com',
+    },
+    {
+      id: 'hyperion-motion',
+      num: '08',
+      title: 'HYPERION Spatial Studio',
+      subtitle: '3D BRAND IDENTITY & INTERACTIVE',
+      category: '3D & Motion',
+      metric: 'FWA of the Month',
+      image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1000&q=80',
+      tags: ['Spline 3D', 'WebGL', 'Brand Strategy', 'Figma'],
+      client: 'Hyperion Spatial Labs',
+      duration: '5 Weeks Sprint',
+      challenge: 'Launch a spatial computing startup with an immersive website that highlights hardware products with interactive 3D exploded views.',
+      solution: 'Crafted interactive 3D product rotators in Spline with real-time shadow rendering and micro-interaction scroll cues.',
+      results: [
+        'Featured as FWA of the Month',
+        '$12M Series A funding secured post-launch',
+        '100% positive user sentiment',
+      ],
+      liveUrl: 'https://example.com',
+    },
   ]
 
-  const filteredProjects = activeFilter === 'All'
-    ? projectsData
-    : projectsData.filter((p) => p.category === activeFilter)
+  const filteredProjects = projectsData.filter((project) => {
+    const matchesFilter = activeFilter === 'All' || project.category === activeFilter
+    const query = searchQuery.toLowerCase().trim()
+    const matchesSearch =
+      !query ||
+      project.title.toLowerCase().includes(query) ||
+      project.subtitle.toLowerCase().includes(query) ||
+      project.client.toLowerCase().includes(query) ||
+      project.tags.some((tag) => tag.toLowerCase().includes(query))
+
+    return matchesFilter && matchesSearch
+  })
 
   return (
-    <div className="projects-page-wrapper">
+    <div className="projects-page-wrapper light-theme">
       
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION (LIGHT THEME) */}
       <section className="projects-hero-section">
         <div className="projects-hero-container">
+          
           <div className="projects-eyebrow-bar">
             <span className="eyebrow-dash-line" />
             <span className="eyebrow-accent">FEATURED PORTFOLIO</span>
-            <span className="eyebrow-separator">—</span>
-            <span className="eyebrow-slogan">REAL RESULTS FOR AMBITIOUS BRANDS</span>
+            <span className="eyebrow-separator">•</span>
+            <span className="eyebrow-slogan">CRAFTED FOR INDUSTRY LEADERS</span>
           </div>
 
           <h1 className="projects-main-headline">
-            <span className="heading-row-solid-dark">OUR FEATURED</span>
+            <span className="heading-row-solid-light">OUR FEATURED</span>
             <span className="heading-row-brand">PROJECTS</span>
           </h1>
 
           <p className="projects-hero-subtitle">
-            Explore our portfolio of high-converting web applications, mobile apps, 3D interactive experiences, and digital brand transformations.
+            Explore our curated showcase of high-converting web applications, mobile platforms, interactive 3D experiences, and digital brand identities.
           </p>
 
-          {/* Filter Pills Bar */}
-          <div className="projects-filter-pills-bar">
-            {filterCategories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                className={`projects-filter-btn ${activeFilter === cat ? 'active' : ''}`}
-                onClick={() => setActiveFilter(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 2. PROJECTS GRID SECTION */}
-      <section className="projects-grid-section">
-        <div className="projects-grid-container">
-          
-          <div className="projects-cards-grid">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="project-card">
-                
-                {/* Media Image Banner */}
-                <div
-                  className="project-media-wrap"
-                  onClick={() => setSelectedCaseStudy(project)}
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="project-img"
-                    loading="lazy"
-                  />
-                  <div className="project-overlay" />
-
-                  {/* Top Badges */}
-                  <div className="project-top-badges">
-                    <span className="badge-cat">{project.category}</span>
-                    <span className="badge-metric">⚡ {project.metric}</span>
-                  </div>
-
-                  {/* Quick View Button */}
-                  <button type="button" className="project-quick-view-btn">
-                    <span>View Case Study</span>
-                    <span className="arrow">→</span>
-                  </button>
-                </div>
-
-                {/* Info Bar */}
-                <div className="project-info-bar">
-                  <div className="project-heading-group">
-                    <span className="project-sub-title">{project.subtitle}</span>
-                    <h3
-                      className="project-title"
-                      onClick={() => setSelectedCaseStudy(project)}
-                    >
-                      {project.title}
-                    </h3>
-                  </div>
-
-                  {/* Tech Tags */}
-                  <div className="project-tags-flex">
-                    {project.tags.map((tag, i) => (
-                      <span key={i} className="project-tag-pill">{tag}</span>
-                    ))}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="project-actions-row">
-                    <button
-                      type="button"
-                      className="project-btn btn-case-study"
-                      onClick={() => setSelectedCaseStudy(project)}
-                    >
-                      Case Study
-                    </button>
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="project-btn btn-live-demo"
-                    >
-                      Live Demo ↗
-                    </a>
-                  </div>
-                </div>
-
+          {/* Key Metrics Strip */}
+          <div className="projects-stats-strip">
+            {projectsStats.map((stat, idx) => (
+              <div key={idx} className="projects-stat-pill">
+                <span className="stat-val">{stat.value}</span>
+                <span className="stat-lbl">{stat.label}</span>
               </div>
             ))}
           </div>
 
+          {/* Search & Filter Toolbar */}
+          <div className="projects-toolbar-card">
+            
+            {/* Search Input */}
+            <div className="projects-search-wrap">
+              <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search by title, tag, or client..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="projects-search-input"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchQuery('')}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Filter Pills */}
+            <div className="projects-filter-pills-bar">
+              {filterCategories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`projects-filter-btn ${activeFilter === cat ? 'active' : ''}`}
+                  onClick={() => setActiveFilter(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* View Mode Toggle (Grid vs List) */}
+            <div className="projects-view-toggle">
+              <button
+                type="button"
+                className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                onClick={() => setViewMode('grid')}
+                title="Grid View"
+                aria-label="Grid View"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                onClick={() => setViewMode('list')}
+                title="List View"
+                aria-label="List View"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="8" y1="6" x2="21" y2="6" />
+                  <line x1="8" y1="12" x2="21" y2="12" />
+                  <line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" strokeWidth="3" />
+                  <line x1="3" y1="12" x2="3.01" y2="12" strokeWidth="3" />
+                  <line x1="3" y1="18" x2="3.01" y2="18" strokeWidth="3" />
+                </svg>
+              </button>
+            </div>
+
+          </div>
+
         </div>
       </section>
 
-      {/* 3. CASE STUDY POPUP MODAL */}
+      {/* 2. PROJECTS DISPLAY SECTION (GRID OR LIST) */}
+      <section className="projects-grid-section">
+        <div className="projects-grid-container">
+          
+          {/* Results Counter */}
+          <div className="projects-results-bar">
+            <span className="results-count">
+              Showing <strong>{filteredProjects.length}</strong> {filteredProjects.length === 1 ? 'project' : 'projects'}
+              {activeFilter !== 'All' && <span> in <strong>{activeFilter}</strong></span>}
+            </span>
+          </div>
+
+          {filteredProjects.length === 0 ? (
+            <div className="projects-no-results">
+              <div className="no-results-icon">🔍</div>
+              <h3>No matching projects found</h3>
+              <p>Try adjusting your search criteria or clear your category filter.</p>
+              <button
+                type="button"
+                className="reset-filters-btn"
+                onClick={() => {
+                  setActiveFilter('All')
+                  setSearchQuery('')
+                }}
+              >
+                Reset All Filters
+              </button>
+            </div>
+          ) : (
+            <div className={`projects-cards-container view-${viewMode}`}>
+              {filteredProjects.map((project) => (
+                <div key={project.id} className="project-card">
+                  
+                  {/* Media Image Banner */}
+                  <div
+                    className="project-media-wrap"
+                    onClick={() => setSelectedCaseStudy(project)}
+                  >
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="project-img"
+                      loading="lazy"
+                    />
+                    <div className="project-overlay" />
+
+                    {/* Top Badges */}
+                    <div className="project-top-badges">
+                      <span className="badge-cat">{project.category}</span>
+                      <span className="badge-metric">⚡ {project.metric}</span>
+                    </div>
+
+                    {/* Quick View Hover Button */}
+                    <button type="button" className="project-quick-view-btn">
+                      <span>View Case Study</span>
+                      <span className="arrow">→</span>
+                    </button>
+                  </div>
+
+                  {/* Info Content Box */}
+                  <div className="project-info-bar">
+                    <div className="project-heading-group">
+                      <span className="project-sub-title">{project.subtitle}</span>
+                      <h3
+                        className="project-title"
+                        onClick={() => setSelectedCaseStudy(project)}
+                      >
+                        {project.title}
+                      </h3>
+                    </div>
+
+                    <p className="project-brief-summary">
+                      {project.challenge}
+                    </p>
+
+                    {/* Tech Tags */}
+                    <div className="project-tags-flex">
+                      {project.tags.map((tag, i) => (
+                        <span key={i} className="project-tag-pill">{tag}</span>
+                      ))}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="project-actions-row">
+                      <button
+                        type="button"
+                        className="project-btn btn-case-study"
+                        onClick={() => setSelectedCaseStudy(project)}
+                      >
+                        Case Study
+                      </button>
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="project-btn btn-live-demo"
+                      >
+                        Live Demo ↗
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* 3. CASE STUDY POPUP MODAL (LIGHT THEME) */}
       {selectedCaseStudy && (
         <div className="project-modal-overlay" onClick={() => setSelectedCaseStudy(null)}>
-          <div className="project-modal-card" onClick={(e) => e.stopPropagation()}>
+          <div className="project-modal-card light-modal" onClick={(e) => e.stopPropagation()}>
+            
             <button
               type="button"
               className="project-modal-close"
@@ -266,7 +430,10 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
 
             {/* Modal Header */}
             <div className="project-modal-header">
-              <span className="modal-cat-tag">{selectedCaseStudy.category} • CASE STUDY</span>
+              <div className="modal-header-top">
+                <span className="modal-cat-tag">{selectedCaseStudy.category} • CASE STUDY</span>
+                <span className="modal-num-badge">PROJECT {selectedCaseStudy.num}</span>
+              </div>
               <h2 className="modal-project-title">{selectedCaseStudy.title}</h2>
               <p className="modal-project-sub">{selectedCaseStudy.subtitle}</p>
             </div>
@@ -278,6 +445,7 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
 
             {/* Modal Body Info */}
             <div className="project-modal-body">
+              
               <div className="modal-meta-grid">
                 <div className="meta-item">
                   <span className="meta-lbl">Client</span>
@@ -308,9 +476,22 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
                 <h3 className="block-heading">Key Results &amp; ROI Impact</h3>
                 <ul className="results-list">
                   {selectedCaseStudy.results.map((res, idx) => (
-                    <li key={idx}>✓ {res}</li>
+                    <li key={idx}>
+                      <span className="check-icon">✓</span>
+                      <span>{res}</span>
+                    </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Tech Stack Used */}
+              <div className="modal-tech-stack">
+                <span className="stack-lbl">Technologies Used:</span>
+                <div className="stack-pills">
+                  {selectedCaseStudy.tags.map((t, i) => (
+                    <span key={i} className="tech-pill">{t}</span>
+                  ))}
+                </div>
               </div>
 
               {/* Action Buttons */}
@@ -323,17 +504,18 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
                     onOpenContactModal()
                   }}
                 >
-                  Start a Similar Project With ORCODIX
+                  Start a Similar Project With ORCODIX →
                 </button>
               </div>
+
             </div>
 
           </div>
         </div>
       )}
 
-      {/* 4. CTA SECTION */}
-      <section className="orcodix-cta-section" id="quote">
+      {/* 4. CTA SECTION (LIGHT THEME) */}
+      <section className="orcodix-cta-section light-cta" id="quote">
         <div className="orcodix-cta-container">
           <div className="orcodix-cta-card">
             <div className="orcodix-cta-content">
@@ -342,14 +524,14 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
                 Have a Project in Mind?<br />Let&apos;s Build It Together.
               </h2>
               <p className="orcodix-cta-desc">
-                Partner with ORCODIX for high-converting web design, 3D interactive visuals, and scalable software engineering.
+                Partner with ORCODIX for high-converting web applications, 3D interactive visuals, and scalable software engineering.
               </p>
               <button
                 type="button"
                 className="orcodix-cta-btn"
                 onClick={onOpenContactModal}
               >
-                Start a Project
+                Start Your Project Today →
               </button>
             </div>
           </div>
@@ -357,9 +539,7 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
       </section>
 
       {/* 5. MAIN SITE FOOTER */}
-      <footer className="orcodix-footer">
-        <div className="footer-ambient-glow" />
-
+      <footer className="orcodix-footer light-footer">
         <div className="orcodix-footer-inner">
           <div className="footer-main-grid">
             <div className="footer-col-brand">
@@ -367,7 +547,7 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
                 <img src="/assets/logo.png" alt="ORCODIX" className="footer-logo-img" />
               </a>
               <p className="footer-brand-tagline">
-                Maximize your digital infrastructure and enhance organizational efficiency.
+                Maximize your digital infrastructure and enhance organizational efficiency with high-impact design and code.
               </p>
 
               <div className="footer-quick-contact">
@@ -383,7 +563,7 @@ export default function ProjectsPage({ onNavigateHome, onOpenContactModal }) {
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                   </a>
                   <a href="https://youtube.com" target="_blank" rel="noreferrer" className="social-square-btn" aria-label="YouTube">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#08090d"/></svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#ffffff"/></svg>
                   </a>
                 </div>
               </div>
